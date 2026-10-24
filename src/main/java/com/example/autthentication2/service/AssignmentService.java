@@ -56,6 +56,11 @@ public class AssignmentService {
                 Sort.by(Sort.Order.desc("createdAt"), Sort.Order.desc("id")));
     }
 
+    private Pageable submissionPaging(int page) {
+        return PageRequest.of(Math.max(0, page), 10,
+                Sort.by(Sort.Order.desc("submittedAt"), Sort.Order.desc("id")));
+    }
+
     private Instant parseDeadline(String deadlineStr) {
         try {
             LocalDateTime ldt = LocalDateTime.parse(deadlineStr.trim(), DATETIME_LOCAL_FORMATTER);
@@ -241,7 +246,7 @@ public class AssignmentService {
 
     @PreAuthorize("hasRole('STUDENT')")
     public Page<SubmissionView> getMySubmissionsHistory(int page) {
-        return submissionRepository.findByStudent_Username(currentUsername(), paging(page))
+        return submissionRepository.findByStudent_Username(currentUsername(), submissionPaging(page))
                 .map(SubmissionView::from);
     }
 

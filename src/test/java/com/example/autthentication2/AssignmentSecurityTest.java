@@ -117,6 +117,13 @@ class AssignmentSecurityTest {
         mvc.perform(get("/student/assignments/{id}", assignmentB_Closed.getId())
                 .with(user("test_student_a").roles("STUDENT")))
                 .andExpect(status().isNotFound());
+
+        // Student A views history page successfully
+        mvc.perform(get("/student/history")
+                .with(user("test_student_a").roles("STUDENT")))
+                .andExpect(status().isOk())
+                .andExpect(view().name("student/history"))
+                .andExpect(model().attributeExists("submissions"));
     }
 
     // T02: LECTURER A không sửa/chấm bài của LECTURER B
