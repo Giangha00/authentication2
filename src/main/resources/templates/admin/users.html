@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Quản lý người dùng - Quản trị viên')}"></head>
+<body>
+
+<nav th:replace="~{fragments/layout :: nav}"></nav>
+
+<div class="container">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
+        <div>
+            <h1 style="font-size: 1.8rem; color: #1e293b;">Quản Lý Tài Khoản & Gán Vai Trò (User Management)</h1>
+            <p style="color: #64748b;">Xem danh sách tài khoản toàn trường và phân quyền quản trị/giảng viên có kiểm soát</p>
+        </div>
+        <div>
+            <a th:href="@{/admin}" class="btn btn-outline btn-sm">← Quay lại bảng giám sát</a>
+        </div>
+    </div>
+
+    <!-- Alert banners -->
+    <div th:if="${successMessage}" class="alert alert-success" th:text="${successMessage}"></div>
+    <div th:if="${errorMessage}" class="alert alert-danger" th:text="${errorMessage}"></div>
+
+    <div class="card">
+        <div class="table-responsive">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th style="width: 50px;">ID</th>
+                        <th>Tên đăng nhập</th>
+                        <th>Họ và tên</th>
+                        <th>Email</th>
+                        <th>Vai trò hiện tại</th>
+                        <th style="width: 250px;">Gán thêm vai trò</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="u : ${users}">
+                        <td th:text="${u.id}">1</td>
+                        <td>
+                            <strong th:text="${u.username}">admin</strong>
+                        </td>
+                        <td th:text="${u.fullName}">Họ tên</td>
+                        <td th:text="${u.email}">email@domain.com</td>
+                        <td>
+                            <span class="badge badge-role" th:text="${u.rolesFormatted}">ROLE_STUDENT</span>
+                        </td>
+                        <td>
+                            <form th:action="@{/admin/users/{id}/roles(id=${u.id})}" method="post" style="display: flex; gap: 0.5rem; align-items: center; margin: 0;">
+                                <select name="roleName" class="form-control" style="padding: 0.35rem 0.5rem; font-size: 0.85rem;" required>
+                                    <option value="" disabled selected>Chọn quyền...</option>
+                                    <option value="ROLE_STUDENT">ROLE_STUDENT</option>
+                                    <option value="ROLE_LECTURER">ROLE_LECTURER</option>
+                                    <option value="ROLE_ADMIN">ROLE_ADMIN</option>
+                                </select>
+                                <button type="submit" class="btn btn-primary btn-sm" style="white-space: nowrap;">Cấp quyền</button>
+                            </form>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+
+</body>
+</html>

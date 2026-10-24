@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Nộp bài tập - Học viên')}"></head>
+<body>
+
+<nav th:replace="~{fragments/layout :: nav}"></nav>
+
+<div class="container" style="max-width: 800px;">
+    <div style="margin-bottom: 1.5rem;">
+        <a th:href="@{/student/assignments}" class="btn btn-outline btn-sm">← Quay lại danh sách bài tập</a>
+    </div>
+
+    <!-- Alert banners -->
+    <div th:if="${successMessage}" class="alert alert-success" th:text="${successMessage}"></div>
+    <div th:if="${errorMessage}" class="alert alert-danger" th:text="${errorMessage}"></div>
+
+    <!-- Assignment Details Card -->
+    <div class="card">
+        <div class="card-header">
+            <div>
+                <h1 class="card-title" th:text="${assignment.title}">Tiêu đề bài tập</h1>
+                <p style="color: #64748b; font-size: 0.9rem; margin-top: 0.25rem;">
+                    Giảng viên phụ trách: <strong th:text="${assignment.lecturerFullName}"></strong> (@<span th:text="${assignment.lecturerUsername}"></span>)
+                </p>
+            </div>
+            <div>
+                <span th:unless="${assignment.isExpired}" class="badge badge-open">Đang mở (OPEN)</span>
+                <span th:if="${assignment.isExpired}" class="badge badge-closed">Hết hạn</span>
+            </div>
+        </div>
+
+        <div style="background: #f8fafc; border: 1px solid var(--border); border-radius: 8px; padding: 1.25rem; margin-bottom: 1.5rem;">
+            <h3 style="font-size: 1rem; color: #334155; margin-bottom: 0.5rem;">📝 Yêu cầu & Hướng dẫn:</h3>
+            <p style="white-space: pre-wrap; color: #1e293b; font-size: 0.95rem; line-height: 1.7;" th:text="${assignment.description}"></p>
+        </div>
+
+        <div style="display: flex; gap: 1rem; align-items: center; margin-bottom: 1rem;">
+            <span style="font-weight: 600; color: #334155;">⏰ Thời hạn nộp bài:</span>
+            <span class="badge badge-role" th:text="${assignment.deadlineFormatted}">31/10/2026 23:59</span>
+        </div>
+
+        <!-- Submission Status Preview -->
+        <div th:if="${submission != null}" class="alert alert-info" style="margin-top: 1rem;">
+            <strong>📌 Trạng thái bài làm của bạn:</strong>
+            <p style="margin-top: 0.35rem;">
+                Bạn đã nộp bài vào lúc: <strong th:text="${submission.submittedAtFormatted}"></strong>
+            </p>
+            <div th:if="${submission.isGraded}" style="margin-top: 0.5rem; padding-top: 0.5rem; border-top: 1px solid #7dd3fc;">
+                <div>Điểm số: <strong style="font-size: 1.1rem; color: #166534;" th:text="${submission.score + ' / 10.0'}"></strong></div>
+                <div th:if="${submission.feedback != null}">Nhận xét: <span th:text="${submission.feedback}"></span></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Submission Form Card -->
+    <div class="card">
+        <h2 class="card-title" style="font-size: 1.3rem; margin-bottom: 1rem;">
+            <span th:if="${submission == null}">📤 Nộp Bài Tập</span>
+            <span th:if="${submission != null}">🔄 Cập Nhật / Nộp Lại Bài Tập (Resubmit)</span>
+        </h2>
+
+        <div th:if="${assignment.isExpired}" class="alert alert-danger">
+            ⛔ <strong>Hết thời hạn nộp bài:</strong> Hệ thống đã khóa chức năng nộp bài do đã quá hạn nộp bài theo giờ máy chủ.
+        </div>
+
+        <form th:unless="${assignment.isExpired}" th:action="@{/student/assignments/{id}/submit(id=${assignment.id})}" th:object="${form}" method="post">
+            <div class="form-group">
+                <label for="content" class="form-label">
+                    Nội dung bài nộp (Đường dẫn GitHub / Repository / Link báo cáo / Mã nguồn): <span style="color: var(--danger)">*</span>
+                </label>
+                <textarea id="content" th:field="*{content}" class="form-control" maxlength="5000" rows="6" placeholder="Nhập liên kết bài làm (ví dụ https://github.com/username/project) hoặc nội dung kết quả làm bài..." required></textarea>
+                <small style="color: #64748b; font-size: 0.85rem;">Tối đa 5000 ký tự. Nộp lại sẽ tự động ghi đè bản nộp trước và cập nhật thời gian nộp theo đồng hồ server.</small>
+                <span class="form-error" th:errors="*{content}"></span>
+            </div>
+
+            <div style="margin-top: 1.5rem; display: flex; gap: 1rem;">
+                <button type="submit" class="btn btn-primary" style="padding: 0.75rem 2rem;">
+                    <span th:if="${submission == null}">🚀 Gửi Bài Nộp</span>
+                    <span th:if="${submission != null}">💾 Lưu & Cập Nhật Bài Nộp</span>
+                </button>
+                <a th:href="@{/student/assignments}" class="btn btn-outline" style="padding: 0.75rem 1.5rem;">Hủy bỏ</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+
+</body>
+</html>

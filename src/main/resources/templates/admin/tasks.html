@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Giám sát công việc cá nhân - Admin')}"></head>
+<body>
+
+<nav th:replace="~{fragments/layout :: nav}"></nav>
+
+<div class="container">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+        <div>
+            <h1 style="font-size: 1.8rem; color: #1e293b;">Toàn bộ công việc cá nhân</h1>
+            <p style="color: #64748b;"><a th:href="@{/tasks}">Công việc của tôi</a> | <a th:href="@{/admin}">Bảng giám sát hệ thống</a></p>
+        </div>
+        <span class="badge badge-closed">Khu vực quản trị</span>
+    </div>
+
+    <div class="card">
+        <p th:if="${tasks.empty}" style="color: #64748b; text-align: center; padding: 2rem 0;">Chưa có dữ liệu.</p>
+
+        <div th:unless="${tasks.empty}" class="table-responsive">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Chủ sở hữu</th>
+                        <th>Tiêu đề</th>
+                        <th>Hạn</th>
+                        <th>Trạng thái</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="t : ${tasks.content}">
+                        <td>
+                            <strong th:text="${t.ownerUsername}"></strong>
+                        </td>
+                        <td th:text="${t.title}"></td>
+                        <td th:text="${t.dueDate}"></td>
+                        <td>
+                            <span th:if="${t.status.name() == 'TODO'}" class="badge badge-open">TODO</span>
+                            <span th:if="${t.status.name() == 'DONE'}" class="badge badge-graded">DONE</span>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid var(--border);">
+            <div>
+                <span style="color: #64748b; font-size: 0.9rem;" th:text="${'Trang ' + (tasks.number + 1) + ' / ' + (tasks.totalPages == 0 ? 1 : tasks.totalPages)}">Trang 1</span>
+            </div>
+            <div style="display: flex; gap: 0.5rem;">
+                <a th:if="${tasks.hasPrevious()}" th:href="@{/admin/tasks(page=${tasks.number - 1})}" class="btn btn-outline btn-sm">Trang trước</a>
+                <a th:if="${tasks.hasNext()}" th:href="@{/admin/tasks(page=${tasks.number + 1})}" class="btn btn-outline btn-sm">Trang sau</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+
+</body>
+</html>

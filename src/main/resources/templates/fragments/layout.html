@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:fragment="head(title)">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${title}">Cổng Giao Bài Tập Học Viên - FPT Aptech</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+<nav th:fragment="nav" class="navbar">
+    <a th:href="@{/}" class="navbar-brand">
+        📚 FPT APTECH <span>Assignment Portal</span>
+    </a>
+
+    <ul class="navbar-nav">
+        <!-- Guest links -->
+        <li sec:authorize="isAnonymous()">
+            <a th:href="@{/login}" class="nav-link">Đăng nhập</a>
+        </li>
+        <li sec:authorize="isAnonymous()">
+            <a th:href="@{/registration}" class="btn btn-primary btn-sm">Đăng ký</a>
+        </li>
+
+        <!-- Logged-in links -->
+        <li sec:authorize="isAuthenticated()">
+            <a th:href="@{/home}" class="nav-link">Trang chủ</a>
+        </li>
+
+        <!-- Student links -->
+        <li sec:authorize="hasRole('STUDENT')">
+            <a th:href="@{/student/assignments}" class="nav-link">Bài tập được giao</a>
+        </li>
+        <li sec:authorize="hasRole('STUDENT')">
+            <a th:href="@{/student/history}" class="nav-link">Lịch sử bài nộp</a>
+        </li>
+
+        <!-- Lecturer links -->
+        <li sec:authorize="hasRole('LECTURER')">
+            <a th:href="@{/lecturer/assignments}" class="nav-link">Quản lý bài tập</a>
+        </li>
+        <li sec:authorize="hasRole('LECTURER')">
+            <a th:href="@{/lecturer/assignments/new}" class="nav-link">+ Tạo bài mới</a>
+        </li>
+
+        <!-- Admin links -->
+        <li sec:authorize="hasRole('ADMIN')">
+            <a th:href="@{/admin}" class="nav-link">Bảng giám sát</a>
+        </li>
+        <li sec:authorize="hasRole('ADMIN')">
+            <a th:href="@{/admin/users}" class="nav-link">Quản lý tài khoản</a>
+        </li>
+        <li sec:authorize="hasRole('ADMIN')">
+            <a th:href="@{/admin/tasks}" class="nav-link">Giám sát Tasks</a>
+        </li>
+
+        <!-- Personal Tasks link -->
+        <li sec:authorize="isAuthenticated()">
+            <a th:href="@{/tasks}" class="nav-link">Công việc cá nhân</a>
+        </li>
+
+        <!-- User info badge & Logout button -->
+        <li sec:authorize="isAuthenticated()" style="display: flex; align-items: center; gap: 0.5rem; margin-left: 1rem;">
+            <span class="user-badge">
+                👤 <span sec:authentication="name">User</span>
+            </span>
+            <form th:action="@{/logout}" method="post" style="display: inline; margin: 0;">
+                <button type="submit" class="btn btn-outline btn-sm" style="color: #cbd5e1; border-color: #475569;">Đăng xuất</button>
+            </form>
+        </li>
+    </ul>
+</nav>
+
+<footer th:fragment="footer">
+    <p>© 2026 FPT Aptech - Hệ thống Quản lý và Phân quyền Giao bài tập học viên (Spring Security 7 + Thymeleaf)</p>
+</footer>
+
+</body>
+</html>

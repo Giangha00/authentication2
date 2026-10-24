@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Giao bài tập cho học viên')}"></head>
+<body>
+
+<nav th:replace="~{fragments/layout :: nav}"></nav>
+
+<div class="container" style="max-width: 800px;">
+    <div style="margin-bottom: 1.5rem;">
+        <a th:href="@{/lecturer/assignments}" class="btn btn-outline btn-sm">← Quay lại danh sách bài tập</a>
+    </div>
+
+    <div class="card">
+        <div class="card-header">
+            <div>
+                <h1 class="card-title">Phân Công & Mở Bài Tập (OPEN)</h1>
+                <p style="color: #64748b; margin-top: 0.25rem;">
+                    Bài tập: <strong th:text="${assignment.title}" style="color: #1e293b;"></strong>
+                </p>
+            </div>
+            <span class="badge badge-draft">Bản thảo</span>
+        </div>
+
+        <form th:action="@{/lecturer/assignments/{id}/open(id=${assignment.id})}" method="post">
+            <p style="font-weight: 600; color: #334155; margin-bottom: 0.75rem;">
+                Chọn các học viên sẽ được giao bài tập này (Chỉ học viên được chọn mới có thể xem và nộp bài):
+            </p>
+
+            <div th:if="${allStudents.empty}" class="alert alert-info">
+                Chưa có tài khoản học viên (STUDENT) nào trong hệ thống.
+            </div>
+
+            <div th:unless="${allStudents.empty}" style="background: #f8fafc; border: 1px solid var(--border); border-radius: 8px; padding: 1rem; max-height: 350px; overflow-y: auto; margin-bottom: 1.5rem;">
+                <div th:each="student : ${allStudents}" style="display: flex; align-items: center; gap: 0.75rem; padding: 0.6rem 0; border-bottom: 1px solid #e2e8f0;">
+                    <input type="checkbox" name="studentIds" th:value="${student.id}" th:id="${'st_' + student.id}"
+                           th:checked="${assignment.assignedStudents.contains(student)}"
+                           style="width: 18px; height: 18px; cursor: pointer;">
+                    <label th:for="${'st_' + student.id}" style="cursor: pointer; font-size: 0.95rem; user-select: none;">
+                        <strong th:text="${student.fullName != null ? student.fullName : student.username}">Học viên</strong>
+                        <span style="color: #64748b; font-size: 0.85rem;" th:text="${'(@' + student.username + ' - ' + (student.email != null ? student.email : '') + ')'}"></span>
+                    </label>
+                </div>
+            </div>
+
+            <div style="display: flex; gap: 1rem;">
+                <button type="submit" class="btn btn-success" style="padding: 0.75rem 1.5rem;">🚀 Mở Bài Tập & Giao Cho Học Viên Đã Chọn</button>
+                <a th:href="@{/lecturer/assignments}" class="btn btn-outline" style="padding: 0.75rem 1.5rem;">Hủy bỏ</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+
+</body>
+</html>

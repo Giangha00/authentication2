@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Quản lý bài tập - Giảng viên')}"></head>
+<body>
+
+<nav th:replace="~{fragments/layout :: nav}"></nav>
+
+<div class="container">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
+        <div>
+            <h1 style="font-size: 1.8rem; color: #1e293b;">Danh Sách Bài Tập Của Tôi</h1>
+            <p style="color: #64748b;">Quản lý các bài tập do bạn phụ trách, giao bài và chấm điểm học viên</p>
+        </div>
+        <div>
+            <a th:href="@{/lecturer/assignments/new}" class="btn btn-primary">+ Tạo bài tập mới (DRAFT)</a>
+        </div>
+    </div>
+
+    <!-- Alert banners -->
+    <div th:if="${successMessage}" class="alert alert-success" th:text="${successMessage}"></div>
+    <div th:if="${errorMessage}" class="alert alert-danger" th:text="${errorMessage}"></div>
+
+    <div class="card">
+        <p th:if="${assignments.empty}" style="color: #64748b; text-align: center; padding: 2rem 0;">
+            Bạn chưa tạo bài tập nào. Hãy bấm nút <strong>"+ Tạo bài tập mới"</strong> để bắt đầu.
+        </p>
+
+        <div th:unless="${assignments.empty}" class="table-responsive">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th style="width: 50px;">ID</th>
+                        <th>Tiêu đề bài tập</th>
+                        <th>Thời hạn (Asia/Ho_Chi_Minh)</th>
+                        <th>Trạng thái</th>
+                        <th>Số học viên</th>
+                        <th style="width: 280px;">Thao tác</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="a : ${assignments.content}">
+                        <td th:text="${a.id}">1</td>
+                        <td>
+                            <strong th:text="${a.title}">Tiêu đề</strong>
+                            <p style="font-size: 0.85rem; color: #64748b; margin-top: 0.2rem;" th:text="${#strings.abbreviate(a.description, 90)}"></p>
+                        </td>
+                        <td>
+                            <span th:text="${a.deadlineFormatted}">31/10/2026 23:59</span>
+                            <span th:if="${a.isExpired}" class="badge badge-closed" style="font-size: 0.7rem; margin-left: 0.25rem;">Hết hạn</span>
+                        </td>
+                        <td>
+                            <span th:if="${a.status.name() == 'DRAFT'}" class="badge badge-draft">Bản thảo (DRAFT)</span>
+                            <span th:if="${a.status.name() == 'OPEN'}" class="badge badge-open">Đang mở (OPEN)</span>
+                            <span th:if="${a.status.name() == 'CLOSED'}" class="badge badge-closed">Đã đóng (CLOSED)</span>
+                        </td>
+                        <td>
+                            <span class="badge badge-role" th:text="${a.assignedCount + ' học viên'}">0 học viên</span>
+                        </td>
+                        <td>
+                            <!-- DRAFT Actions -->
+                            <div th:if="${a.status.name() == 'DRAFT'}" style="display: flex; gap: 0.5rem;">
+                                <a th:href="@{/lecturer/assignments/{id}/edit(id=${a.id})}" class="btn btn-outline btn-sm">Sửa</a>
+                                <a th:href="@{/lecturer/assignments/{id}/open(id=${a.id})}" class="btn btn-success btn-sm">Giao & Mở bài</a>
+                            </div>
+
+                            <!-- OPEN Actions -->
+                            <div th:if="${a.status.name() == 'OPEN'}" style="display: flex; gap: 0.5rem; align-items: center;">
+                                <a th:href="@{/lecturer/assignments/{id}/edit(id=${a.id})}" class="btn btn-outline btn-sm">Sửa</a>
+                                <a th:href="@{/lecturer/assignments/{id}/submissions(id=${a.id})}" class="btn btn-primary btn-sm">Xem bài nộp</a>
+                                <form th:action="@{/lecturer/assignments/{id}/close(id=${a.id})}" method="post" style="display: inline; margin: 0;">
+                                    <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Bạn có chắc chắn muốn đóng bài tập này? Sau khi đóng, học viên không thể nộp bài tiếp.');">Đóng bài</button>
+                                </form>
+                            </div>
+
+                            <!-- CLOSED Actions -->
+                            <div th:if="${a.status.name() == 'CLOSED'}" style="display: flex; gap: 0.5rem;">
+                                <a th:href="@{/lecturer/assignments/{id}/submissions(id=${a.id})}" class="btn btn-primary btn-sm">Xem & Chấm điểm</a>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Pagination -->
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid var(--border);">
+            <div>
+                <span style="color: #64748b; font-size: 0.9rem;" th:text="${'Trang ' + (assignments.number + 1) + ' / ' + (assignments.totalPages == 0 ? 1 : assignments.totalPages)}">Trang 1 / 1</span>
+            </div>
+            <div style="display: flex; gap: 0.5rem;">
+                <a th:if="${assignments.hasPrevious()}" th:href="@{/lecturer/assignments(page=${assignments.number - 1})}" class="btn btn-outline btn-sm">Trang trước</a>
+                <a th:if="${assignments.hasNext()}" th:href="@{/lecturer/assignments(page=${assignments.number + 1})}" class="btn btn-outline btn-sm">Trang sau</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+
+</body>
+</html>

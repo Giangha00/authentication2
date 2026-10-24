@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Công việc của tôi')}"></head>
+<body>
+
+<nav th:replace="~{fragments/layout :: nav}"></nav>
+
+<div class="container">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+        <div>
+            <h1 style="font-size: 1.8rem; color: #1e293b;">Công việc của tôi</h1>
+            <p style="color: #64748b;"><a th:href="@{/}">Trang chủ</a> | <a th:href="@{/tasks/new}">Thêm công việc mới</a></p>
+        </div>
+        <div>
+            <a th:href="@{/tasks/new}" class="btn btn-primary">+ Thêm công việc</a>
+        </div>
+    </div>
+
+    <div class="card">
+        <p th:if="${tasks.empty}" style="color: #64748b; text-align: center; padding: 2rem 0;">Chưa có công việc nào.</p>
+
+        <div th:unless="${tasks.empty}" class="table-responsive">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Tiêu đề</th>
+                        <th>Hạn</th>
+                        <th>Trạng thái</th>
+                        <th style="width: 180px;">Thao tác</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="t : ${tasks.content}">
+                        <td th:text="${t.title}"></td>
+                        <td th:text="${t.dueDate}"></td>
+                        <td>
+                            <span th:if="${t.status.name() == 'TODO'}" class="badge badge-open">TODO</span>
+                            <span th:if="${t.status.name() == 'DONE'}" class="badge badge-graded">DONE</span>
+                        </td>
+                        <td>
+                            <div style="display: flex; gap: 0.5rem; align-items: center;">
+                                <a th:href="@{/tasks/{id}/edit(id=${t.id})}" class="btn btn-outline btn-sm">Sửa</a>
+                                <form th:action="@{/tasks/{id}/delete(id=${t.id})}" method="post" style="display: inline; margin: 0;">
+                                    <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Bạn có chắc chắn muốn xóa công việc này?');">Xóa</button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid var(--border);">
+            <div>
+                <span style="color: #64748b; font-size: 0.9rem;" th:text="${'Trang ' + (tasks.number + 1) + ' / ' + (tasks.totalPages == 0 ? 1 : tasks.totalPages)}">Trang 1</span>
+            </div>
+            <div style="display: flex; gap: 0.5rem;">
+                <a th:if="${tasks.hasPrevious()}" th:href="@{/tasks(page=${tasks.number - 1})}" class="btn btn-outline btn-sm">Trang trước</a>
+                <a th:if="${tasks.hasNext()}" th:href="@{/tasks(page=${tasks.number + 1})}" class="btn btn-outline btn-sm">Trang sau</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+
+</body>
+</html>

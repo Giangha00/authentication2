@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Bảng giám sát hệ thống - Quản trị viên')}"></head>
+<body>
+
+<nav th:replace="~{fragments/layout :: nav}"></nav>
+
+<div class="container">
+    <div style="margin-bottom: 1.5rem;">
+        <h1 style="font-size: 1.8rem; color: #1e293b;">Bảng Giám Sát Toàn Hệ Thống (Admin Monitoring)</h1>
+        <p style="color: #64748b;">Theo dõi các số liệu thống kê bài tập, số bài nộp và tiến độ chấm điểm (Quy định: Admin không tự sửa điểm)</p>
+    </div>
+
+    <!-- Stats Grid -->
+    <div class="grid-cards" style="margin-bottom: 2rem;">
+        <div class="stat-box" style="border-left: 4px solid var(--primary);">
+            <div class="stat-label">Tổng bài tập</div>
+            <div class="stat-number" th:text="${stats.totalAssignments}">3</div>
+            <div style="font-size: 0.85rem; color: #64748b; margin-top: 0.5rem;">
+                <span th:text="${stats.openAssignments}">1</span> Đang mở | 
+                <span th:text="${stats.closedAssignments}">1</span> Đã đóng | 
+                <span th:text="${stats.draftAssignments}">1</span> Bản thảo
+            </div>
+        </div>
+
+        <div class="stat-box" style="border-left: 4px solid var(--success);">
+            <div class="stat-label">Tổng bài nộp học viên</div>
+            <div class="stat-number" style="color: var(--success);" th:text="${stats.totalSubmissions}">1</div>
+            <div style="font-size: 0.85rem; color: #64748b; margin-top: 0.5rem;">
+                <span th:text="${stats.gradedSubmissions}" style="color: #16a34a; font-weight: 700;">1</span> Đã chấm | 
+                <span th:text="${stats.pendingSubmissions}" style="color: #d97706; font-weight: 700;">0</span> Chờ chấm
+            </div>
+        </div>
+
+        <div class="stat-box" style="border-left: 4px solid #8b5cf6;">
+            <div class="stat-label">Tổng tài khoản</div>
+            <div class="stat-number" style="color: #8b5cf6;" th:text="${stats.totalUsers}">6</div>
+            <div style="font-size: 0.85rem; color: #64748b; margin-top: 0.5rem;">
+                <span th:text="${stats.totalStudents}">3</span> Học viên | 
+                <span th:text="${stats.totalLecturers}">2</span> Giảng viên
+            </div>
+        </div>
+    </div>
+
+    <!-- All Assignments Table -->
+    <div class="card">
+        <div class="card-header">
+            <h2 class="card-title">📋 Toàn Bộ Bài Tập Trong Hệ Thống</h2>
+            <a th:href="@{/admin/users}" class="btn btn-outline btn-sm">👥 Quản lý phân quyền tài khoản</a>
+        </div>
+
+        <div th:if="${assignments.empty}" style="color: #64748b; text-align: center; padding: 2rem 0;">
+            Chưa có bài tập nào trong hệ thống.
+        </div>
+
+        <div th:unless="${assignments.empty}" class="table-responsive">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th style="width: 50px;">ID</th>
+                        <th>Tiêu đề bài tập</th>
+                        <th>Giảng viên</th>
+                        <th>Thời hạn</th>
+                        <th>Trạng thái</th>
+                        <th>Số học viên</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="a : ${assignments.content}">
+                        <td th:text="${a.id}">1</td>
+                        <td>
+                            <strong th:text="${a.title}">Tiêu đề</strong>
+                        </td>
+                        <td>
+                            <span th:text="${a.lecturerFullName}">Giảng viên</span>
+                            <div style="font-size: 0.8rem; color: #64748b;" th:text="${'@' + a.lecturerUsername}"></div>
+                        </td>
+                        <td th:text="${a.deadlineFormatted}">31/10/2026 23:59</td>
+                        <td>
+                            <span th:if="${a.status.name() == 'DRAFT'}" class="badge badge-draft">Bản thảo (DRAFT)</span>
+                            <span th:if="${a.status.name() == 'OPEN'}" class="badge badge-open">Đang mở (OPEN)</span>
+                            <span th:if="${a.status.name() == 'CLOSED'}" class="badge badge-closed">Đã đóng (CLOSED)</span>
+                        </td>
+                        <td>
+                            <span class="badge badge-role" th:text="${a.assignedCount + ' học viên'}">0 học viên</span>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+
+</body>
+</html>

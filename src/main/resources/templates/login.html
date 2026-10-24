@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Đăng nhập - Cổng Giao Bài Tập')}"></head>
+<body>
+
+<nav th:replace="~{fragments/layout :: nav}"></nav>
+
+<div class="container" style="max-width: 520px; margin-top: 3rem;">
+    <div class="card">
+        <div class="card-header" style="justify-content: center; border-bottom: none; padding-bottom: 0;">
+            <h1 class="card-title" style="font-size: 1.8rem;">Đăng Nhập</h1>
+        </div>
+        <p style="text-align: center; color: #64748b; font-size: 0.95rem; margin-bottom: 1.5rem;">
+            Truy cập hệ thống quản lý và nộp bài tập trực tuyến
+        </p>
+
+        <!-- Alerts -->
+        <div th:if="${errorMessage}" class="alert alert-danger" th:text="${errorMessage}"></div>
+        <div th:if="${logoutMessage}" class="alert alert-info" th:text="${logoutMessage}"></div>
+        <div th:if="${successMessage}" class="alert alert-success" th:text="${successMessage}"></div>
+
+        <form th:action="@{/login}" method="post">
+            <div class="form-group">
+                <label for="username" class="form-label">Tên đăng nhập (Username):</label>
+                <input type="text" id="username" name="username" class="form-control" placeholder="Nhập username của bạn" required autofocus>
+            </div>
+
+            <div class="form-group">
+                <label for="password" class="form-label">Mật khẩu (Password):</label>
+                <input type="password" id="password" name="password" class="form-control" placeholder="Nhập mật khẩu" required>
+            </div>
+
+            <div style="margin-top: 1.5rem;">
+                <button type="submit" class="btn btn-primary" style="width: 100%; padding: 0.75rem; font-size: 1.05rem;">Đăng Nhập</button>
+            </div>
+        </form>
+
+        <div style="margin-top: 1.5rem; text-align: center; border-top: 1px solid var(--border); padding-top: 1.25rem;">
+            <p style="font-size: 0.95rem; color: #64748b;">
+                Chưa có tài khoản? <a th:href="@{/registration}" style="color: var(--primary); font-weight: 600;">Đăng ký ngay tại đây</a>
+            </p>
+        </div>
+    </div>
+
+    <!-- Demo Account Helper Card -->
+    <div class="card" style="background: #f8fafc; border-style: dashed;">
+        <h3 style="font-size: 0.95rem; font-weight: 700; color: #334155; margin-bottom: 0.5rem;">💡 Tài khoản kiểm thử nhanh (Password: Password@123):</h3>
+        <ul style="font-size: 0.85rem; color: #475569; padding-left: 1.2rem; line-height: 1.6;">
+            <li><strong>admin</strong> - Quản trị viên (ROLE_ADMIN)</li>
+            <li><strong>lecturer1</strong> - Giảng viên 1 (ROLE_LECTURER)</li>
+            <li><strong>lecturer2</strong> - Giảng viên 2 (ROLE_LECTURER)</li>
+            <li><strong>student1</strong>, <strong>student2</strong>, <strong>student3</strong> - Học viên (ROLE_STUDENT)</li>
+        </ul>
+    </div>
+</div>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+
+</body>
+</html>

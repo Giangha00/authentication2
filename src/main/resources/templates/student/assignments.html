@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Bài tập được giao - Học viên')}"></head>
+<body>
+
+<nav th:replace="~{fragments/layout :: nav}"></nav>
+
+<div class="container">
+    <div style="margin-bottom: 1.5rem;">
+        <h1 style="font-size: 1.8rem; color: #1e293b;">Bài Tập Đang Mở Được Giao Cho Bạn</h1>
+        <p style="color: #64748b;">Danh sách các bài tập đang mở (OPEN) mà giảng viên đã phân công cho bạn hoàn thành</p>
+    </div>
+
+    <!-- Alert banners -->
+    <div th:if="${successMessage}" class="alert alert-success" th:text="${successMessage}"></div>
+    <div th:if="${errorMessage}" class="alert alert-danger" th:text="${errorMessage}"></div>
+
+    <div class="card">
+        <p th:if="${assignments.empty}" style="color: #64748b; text-align: center; padding: 2rem 0;">
+            Hiện tại bạn chưa có bài tập nào đang mở hoặc chưa được phân công.
+        </p>
+
+        <div th:unless="${assignments.empty}" class="table-responsive">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Tiêu đề bài tập</th>
+                        <th>Giảng viên phụ trách</th>
+                        <th>Thời hạn nộp (Asia/Ho_Chi_Minh)</th>
+                        <th>Trạng thái hạn</th>
+                        <th style="width: 160px;">Thao tác</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="a : ${assignments.content}">
+                        <td>
+                            <strong th:text="${a.title}">Tiêu đề bài tập</strong>
+                            <p style="font-size: 0.85rem; color: #64748b; margin-top: 0.2rem;" th:text="${#strings.abbreviate(a.description, 100)}"></p>
+                        </td>
+                        <td>
+                            <span th:text="${a.lecturerFullName}">Giảng viên</span>
+                            <div style="font-size: 0.8rem; color: #64748b;" th:text="${'@' + a.lecturerUsername}"></div>
+                        </td>
+                        <td th:text="${a.deadlineFormatted}">31/10/2026 23:59</td>
+                        <td>
+                            <span th:unless="${a.isExpired}" class="badge badge-open">Còn hạn nộp</span>
+                            <span th:if="${a.isExpired}" class="badge badge-closed">Đã hết hạn</span>
+                        </td>
+                        <td>
+                            <a th:href="@{/student/assignments/{id}(id=${a.id})}" class="btn btn-primary btn-sm">Nộp / Xem chi tiết</a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Pagination -->
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid var(--border);">
+            <div>
+                <span style="color: #64748b; font-size: 0.9rem;" th:text="${'Trang ' + (assignments.number + 1) + ' / ' + (assignments.totalPages == 0 ? 1 : assignments.totalPages)}">Trang 1 / 1</span>
+            </div>
+            <div style="display: flex; gap: 0.5rem;">
+                <a th:if="${assignments.hasPrevious()}" th:href="@{/student/assignments(page=${assignments.number - 1})}" class="btn btn-outline btn-sm">Trang trước</a>
+                <a th:if="${assignments.hasNext()}" th:href="@{/student/assignments(page=${assignments.number + 1})}" class="btn btn-outline btn-sm">Trang sau</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+
+</body>
+</html>

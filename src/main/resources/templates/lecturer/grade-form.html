@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Chấm điểm bài nộp - Giảng viên')}"></head>
+<body>
+
+<nav th:replace="~{fragments/layout :: nav}"></nav>
+
+<div class="container" style="max-width: 650px;">
+    <div style="margin-bottom: 1.5rem;">
+        <a th:href="@{/lecturer/assignments/{id}/submissions(id=${assignment.id})}" class="btn btn-outline btn-sm">← Quay lại danh sách bài nộp</a>
+    </div>
+
+    <div class="card">
+        <div class="card-header">
+            <div>
+                <h1 class="card-title">Chấm Điểm Bài Nộp</h1>
+                <p style="color: #64748b; margin-top: 0.25rem;">
+                    Bài tập: <strong th:text="${assignment.title}" style="color: #1e293b;"></strong>
+                </p>
+            </div>
+            <span class="badge badge-closed">CLOSED</span>
+        </div>
+
+        <div th:if="${errorMessage}" class="alert alert-danger" th:text="${errorMessage}"></div>
+
+        <form th:action="@{/lecturer/assignments/{id}/submissions/{subId}/grade(id=${assignment.id}, subId=${submissionId})}" th:object="${form}" method="post">
+            <div class="form-group">
+                <label for="score" class="form-label">Điểm số (Thang điểm 0.00 - 10.00, tối đa 2 chữ số thập phân): <span style="color: var(--danger)">*</span></label>
+                <input type="number" id="score" th:field="*{score}" class="form-control" step="0.01" min="0.00" max="10.00" placeholder="Ví dụ: 8.50" required>
+                <span class="form-error" th:errors="*{score}"></span>
+            </div>
+
+            <div class="form-group">
+                <label for="feedback" class="form-label">Nhận xét chi tiết cho học viên: <span style="color: var(--danger)">*</span></label>
+                <textarea id="feedback" th:field="*{feedback}" class="form-control" maxlength="2000" rows="5" placeholder="Nhận xét ưu điểm, các lỗi cần cải thiện, đề xuất học tập..." required></textarea>
+                <span class="form-error" th:errors="*{feedback}"></span>
+            </div>
+
+            <div class="alert alert-info" style="font-size: 0.85rem; padding: 0.75rem 1rem;">
+                ⚠️ <strong>Lưu ý quan trọng (F06):</strong> Chấm điểm bản bắt buộc chỉ thực hiện một lần. Sau khi bấm lưu, điểm số và nhận xét sẽ được gửi đến học viên và không thể chỉnh sửa lại.
+            </div>
+
+            <div style="margin-top: 1.5rem; display: flex; gap: 1rem;">
+                <button type="submit" class="btn btn-success" style="padding: 0.75rem 1.5rem;">✅ Xác nhận chấm điểm & Lưu</button>
+                <a th:href="@{/lecturer/assignments/{id}/submissions(id=${assignment.id})}" class="btn btn-outline" style="padding: 0.75rem 1.5rem;">Hủy</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+
+</body>
+</html>

@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Danh sách bài nộp - Giảng viên')}"></head>
+<body>
+
+<nav th:replace="~{fragments/layout :: nav}"></nav>
+
+<div class="container">
+    <div style="margin-bottom: 1.5rem;">
+        <a th:href="@{/lecturer/assignments}" class="btn btn-outline btn-sm">← Quay lại danh sách bài tập</a>
+    </div>
+
+    <!-- Alert banners -->
+    <div th:if="${successMessage}" class="alert alert-success" th:text="${successMessage}"></div>
+    <div th:if="${errorMessage}" class="alert alert-danger" th:text="${errorMessage}"></div>
+
+    <div class="card">
+        <div class="card-header">
+            <div>
+                <h1 class="card-title">Danh Sách Bài Nộp Của Học Viên</h1>
+                <p style="color: #64748b; margin-top: 0.25rem;">
+                    Bài tập: <strong th:text="${assignment.title}" style="color: #1e293b;"></strong>
+                </p>
+            </div>
+            <div>
+                <span th:if="${assignment.status.name() == 'DRAFT'}" class="badge badge-draft">Bản thảo</span>
+                <span th:if="${assignment.status.name() == 'OPEN'}" class="badge badge-open">Đang mở (OPEN)</span>
+                <span th:if="${assignment.status.name() == 'CLOSED'}" class="badge badge-closed">Đã đóng (CLOSED)</span>
+            </div>
+        </div>
+
+        <div th:if="${assignment.status.name() == 'OPEN'}" class="alert alert-info">
+            ℹ️ <strong>Quy tắc chấm điểm (F06):</strong> Bài tập hiện đang ở trạng thái <strong>OPEN</strong>. Theo quy định, giảng viên chỉ tiến hành chấm điểm sau khi đã <strong>ĐÓNG BÀI TẬP (CLOSED)</strong> để đảm bảo sự công bằng cho tất cả học viên.
+        </div>
+
+        <p th:if="${#lists.isEmpty(submissions)}" style="color: #64748b; text-align: center; padding: 2rem 0;">
+            Chưa có học viên nào nộp bài cho bài tập này.
+        </p>
+
+        <div th:unless="${#lists.isEmpty(submissions)}" class="table-responsive">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Học viên</th>
+                        <th>Thời gian nộp</th>
+                        <th>Nội dung bài làm / Link</th>
+                        <th>Điểm số</th>
+                        <th>Nhận xét của giảng viên</th>
+                        <th>Thao tác</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="s : ${submissions}">
+                        <td>
+                            <strong th:text="${s.studentFullName}">Tên học viên</strong>
+                            <div style="font-size: 0.8rem; color: #64748b;" th:text="${'@' + s.studentUsername}"></div>
+                        </td>
+                        <td th:text="${s.submittedAtFormatted}">24/10/2026 15:30:00</td>
+                        <td>
+                            <div style="max-width: 350px; word-break: break-all;" th:text="${s.content}"></div>
+                        </td>
+                        <td>
+                            <span th:if="${s.isGraded}" class="badge badge-graded" style="font-size: 0.9rem;" th:text="${s.score + ' / 10.0'}">9.50 / 10.0</span>
+                            <span th:unless="${s.isGraded}" class="badge badge-pending">Chưa chấm</span>
+                        </td>
+                        <td>
+                            <span th:if="${s.feedback != null and !s.feedback.isEmpty()}" th:text="${s.feedback}"></span>
+                            <span th:unless="${s.feedback != null and !s.feedback.isEmpty()}" style="color: #94a3b8; font-style: italic;">Chưa có</span>
+                        </td>
+                        <td>
+                            <div th:if="${assignment.status.name() == 'CLOSED'}">
+                                <a th:unless="${s.isGraded}" th:href="@{/lecturer/assignments/{id}/submissions/{subId}/grade(id=${assignment.id}, subId=${s.id})}" class="btn btn-primary btn-sm">Chấm điểm</a>
+                                <span th:if="${s.isGraded}" class="badge badge-draft" style="font-size: 0.8rem;">Đã chấm (Khóa)</span>
+                            </div>
+                            <div th:unless="${assignment.status.name() == 'CLOSED'}">
+                                <span style="font-size: 0.85rem; color: #94a3b8;">Cần đóng bài trước</span>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+
+</body>
+</html>

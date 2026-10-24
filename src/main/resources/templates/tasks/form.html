@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Biên tập công việc')}"></head>
+<body>
+
+<nav th:replace="~{fragments/layout :: nav}"></nav>
+
+<div class="container" style="max-width: 650px;">
+    <div style="margin-bottom: 1.5rem;">
+        <a th:href="@{/tasks}" class="btn btn-outline btn-sm">← Quay lại danh sách công việc</a>
+    </div>
+
+    <div class="card">
+        <div class="card-header">
+            <h1 class="card-title" th:text="${taskId == null ? 'Thêm công việc' : 'Sửa công việc'}">Biên tập công việc</h1>
+        </div>
+
+        <form th:action="@{${actionUrl}}" th:object="${form}" method="post">
+            <div class="form-group">
+                <label for="title" class="form-label">Tiêu đề</label>
+                <input id="title" th:field="*{title}" class="form-control" maxlength="150" required>
+                <span class="form-error" th:errors="*{title}"></span>
+            </div>
+
+            <div class="form-group">
+                <label for="description" class="form-label">Mô tả</label>
+                <textarea id="description" th:field="*{description}" class="form-control" maxlength="2000" rows="4"></textarea>
+                <span class="form-error" th:errors="*{description}"></span>
+            </div>
+
+            <div class="form-group">
+                <label for="dueDate" class="form-label">Hạn hoàn thành</label>
+                <input id="dueDate" type="date" th:field="*{dueDate}" class="form-control" required>
+                <span class="form-error" th:errors="*{dueDate}"></span>
+            </div>
+
+            <div class="form-group">
+                <label for="status" class="form-label">Trạng thái</label>
+                <select id="status" th:field="*{status}" class="form-control">
+                    <option th:each="s : ${statuses}" th:value="${s}" th:text="${s}"></option>
+                </select>
+                <span class="form-error" th:errors="*{status}"></span>
+            </div>
+
+            <div style="margin-top: 1.5rem; display: flex; gap: 1rem;">
+                <button type="submit" class="btn btn-primary">Lưu</button>
+                <a th:href="@{/tasks}" class="btn btn-outline">Hủy</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+
+</body>
+</html>

@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Đăng ký tài khoản - Cổng Giao Bài Tập')}"></head>
+<body>
+
+<nav th:replace="~{fragments/layout :: nav}"></nav>
+
+<div class="container" style="max-width: 580px; margin-top: 2rem;">
+    <div class="card">
+        <div class="card-header" style="justify-content: center; border-bottom: none; padding-bottom: 0;">
+            <h1 class="card-title" style="font-size: 1.8rem;">Đăng Ký Tài Khoản Học Viên</h1>
+        </div>
+        <p style="text-align: center; color: #64748b; font-size: 0.95rem; margin-bottom: 1.5rem;">
+            Tạo tài khoản học viên mới để tham gia nộp bài tập và xem kết quả học tập
+        </p>
+
+        <div th:if="${errorMessage}" class="alert alert-danger" th:text="${errorMessage}"></div>
+
+        <form th:action="@{/registration}" th:object="${registrationDto}" method="post">
+            <div class="form-group">
+                <label for="username" class="form-label">Tên đăng nhập (Username): <span style="color: var(--danger)">*</span></label>
+                <input type="text" id="username" th:field="*{username}" class="form-control" placeholder="Chỉ gồm chữ cái, số và dấu gạch dưới" required>
+                <span class="form-error" th:errors="*{username}"></span>
+            </div>
+
+            <div class="form-group">
+                <label for="fullName" class="form-label">Họ và tên học viên: <span style="color: var(--danger)">*</span></label>
+                <input type="text" id="fullName" th:field="*{fullName}" class="form-control" placeholder="Ví dụ: Nguyễn Văn C" required>
+                <span class="form-error" th:errors="*{fullName}"></span>
+            </div>
+
+            <div class="form-group">
+                <label for="email" class="form-label">Địa chỉ Email: <span style="color: var(--danger)">*</span></label>
+                <input type="email" id="email" th:field="*{email}" class="form-control" placeholder="name@fptaptech.edu.vn" required>
+                <span class="form-error" th:errors="*{email}"></span>
+            </div>
+
+            <div class="form-group">
+                <label for="password" class="form-label">Mật khẩu: <span style="color: var(--danger)">*</span></label>
+                <input type="password" id="password" th:field="*{password}" class="form-control" placeholder="Tối thiểu 6 ký tự" required>
+                <span class="form-error" th:errors="*{password}"></span>
+            </div>
+
+            <div class="form-group">
+                <label for="confirmPassword" class="form-label">Xác nhận mật khẩu: <span style="color: var(--danger)">*</span></label>
+                <input type="password" id="confirmPassword" th:field="*{confirmPassword}" class="form-control" placeholder="Nhập lại mật khẩu" required>
+                <span class="form-error" th:errors="*{confirmPassword}"></span>
+            </div>
+
+            <div class="alert alert-info" style="font-size: 0.85rem; padding: 0.75rem 1rem; margin-top: 1rem;">
+                ℹ️ <strong>Quy định bảo mật:</strong> Đăng ký tài khoản công khai mặc định được gán vai trò <strong>ROLE_STUDENT</strong>. Quyền Giảng viên (LECTURER) và Quản trị viên (ADMIN) chỉ được cấp qua quy trình kiểm soát nội bộ.
+            </div>
+
+            <div style="margin-top: 1.5rem;">
+                <button type="submit" class="btn btn-primary" style="width: 100%; padding: 0.75rem; font-size: 1.05rem;">Hoàn Tất Đăng Ký</button>
+            </div>
+        </form>
+
+        <div style="margin-top: 1.5rem; text-align: center; border-top: 1px solid var(--border); padding-top: 1.25rem;">
+            <p style="font-size: 0.95rem; color: #64748b;">
+                Đã có tài khoản? <a th:href="@{/login}" style="color: var(--primary); font-weight: 600;">Đăng nhập ngay</a>
+            </p>
+        </div>
+    </div>
+</div>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+
+</body>
+</html>

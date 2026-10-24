@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head(${isEdit ? 'Chỉnh sửa bài tập' : 'Tạo bài tập mới'})}"></head>
+<body>
+
+<nav th:replace="~{fragments/layout :: nav}"></nav>
+
+<div class="container" style="max-width: 720px;">
+    <div style="margin-bottom: 1.5rem;">
+        <a th:href="@{/lecturer/assignments}" class="btn btn-outline btn-sm">← Quay lại danh sách bài tập</a>
+    </div>
+
+    <div class="card">
+        <div class="card-header">
+            <h1 class="card-title" th:text="${isEdit ? 'Chỉnh Sửa Bài Tập' : 'Tạo Bản Thảo Bài Tập Mới (DRAFT)'}">Tạo bài tập mới</h1>
+        </div>
+
+        <div th:if="${errorMessage}" class="alert alert-danger" th:text="${errorMessage}"></div>
+
+        <form th:action="@{${actionUrl}}" th:object="${form}" method="post">
+            <div class="form-group">
+                <label for="title" class="form-label">Tiêu đề bài tập: <span style="color: var(--danger)">*</span></label>
+                <input type="text" id="title" th:field="*{title}" class="form-control" maxlength="150" placeholder="Ví dụ: Bài tập 1: Xây dựng REST API với Spring Boot" required>
+                <span class="form-error" th:errors="*{title}"></span>
+            </div>
+
+            <div class="form-group">
+                <label for="description" class="form-label">Mô tả và yêu cầu nộp bài: <span style="color: var(--danger)">*</span></label>
+                <textarea id="description" th:field="*{description}" class="form-control" maxlength="4000" rows="6" placeholder="Mô tả chi tiết các yêu cầu kỹ thuật, tiêu chí chấm điểm, định dạng nộp..." required></textarea>
+                <span class="form-error" th:errors="*{description}"></span>
+            </div>
+
+            <div class="form-group">
+                <label for="deadline" class="form-label">Thời hạn hoàn thành (Asia/Ho_Chi_Minh): <span style="color: var(--danger)">*</span></label>
+                <input type="datetime-local" id="deadline" th:field="*{deadline}" class="form-control" required>
+                <small style="color: #64748b; font-size: 0.85rem;">Lưu ý: Thời hạn phải ở một thời điểm trong tương lai so với thời điểm hiện tại.</small>
+                <span class="form-error" th:errors="*{deadline}"></span>
+            </div>
+
+            <div style="margin-top: 1.75rem; display: flex; gap: 1rem;">
+                <button type="submit" class="btn btn-primary" th:text="${isEdit ? 'Cập nhật bài tập' : 'Lưu bản thảo (DRAFT)'}">Lưu</button>
+                <a th:href="@{/lecturer/assignments}" class="btn btn-outline">Hủy bỏ</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+
+</body>
+</html>

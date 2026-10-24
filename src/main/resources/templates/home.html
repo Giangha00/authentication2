@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments/layout :: head('Bảng điều khiển - Cổng Giao Bài Tập')}"></head>
+<body>
+
+<nav th:replace="~{fragments/layout :: nav}"></nav>
+
+<div class="container">
+    <div class="card" style="border-left: 5px solid var(--primary);">
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+            <div>
+                <h1 style="font-size: 1.8rem; color: #1e293b;">Xin chào, <span th:text="${username}" style="color: var(--primary);">Người dùng</span>! 👋</h1>
+                <p style="color: #64748b; margin-top: 0.25rem;">Chào mừng bạn đến với Cổng Giao & Nộp Bài Tập FPT Aptech.</p>
+            </div>
+            <div>
+                <span class="user-badge" style="font-size: 0.95rem; padding: 0.5rem 1rem;">
+                    Vai trò hiện tại: <span th:text="${#strings.listJoin(authorities, ', ')}" style="font-weight: 700; color: #38bdf8;"></span>
+                </span>
+            </div>
+        </div>
+    </div>
+
+    <!-- STUDENT Section -->
+    <div sec:authorize="hasRole('STUDENT')" class="card">
+        <div class="card-header">
+            <h2 class="card-title">🎓 Góc Học Viên (Student Workspace)</h2>
+            <span class="badge badge-open">Quyền học viên</span>
+        </div>
+        <p style="color: #64748b; margin-bottom: 1.25rem;">
+            Bạn có thể theo dõi danh sách bài tập được các giảng viên phân công, nộp bài trực tuyến và tra cứu kết quả điểm số.
+        </p>
+        <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+            <a th:href="@{/student/assignments}" class="btn btn-primary">📖 Xem bài tập được giao (Đang mở)</a>
+            <a th:href="@{/student/history}" class="btn btn-outline">📊 Xem lịch sử nộp bài & Điểm số</a>
+            <a th:href="@{/tasks}" class="btn btn-secondary">📝 Quản lý công việc cá nhân</a>
+        </div>
+    </div>
+
+    <!-- LECTURER Section -->
+    <div sec:authorize="hasRole('LECTURER')" class="card">
+        <div class="card-header">
+            <h2 class="card-title">👨‍🏫 Góc Giảng Viên (Lecturer Workspace)</h2>
+            <span class="badge badge-open">Quyền giảng viên</span>
+        </div>
+        <p style="color: #64748b; margin-bottom: 1.25rem;">
+            Tạo bài tập mới, phân bổ cho danh sách học viên, đóng bài tập khi kết thúc hạn và tiến hành chấm điểm.
+        </p>
+        <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+            <a th:href="@{/lecturer/assignments}" class="btn btn-primary">📋 Danh sách bài tập do tôi phụ trách</a>
+            <a th:href="@{/lecturer/assignments/new}" class="btn btn-success">+ Tạo bản thảo bài tập mới (DRAFT)</a>
+            <a th:href="@{/tasks}" class="btn btn-secondary">📝 Công việc cá nhân</a>
+        </div>
+    </div>
+
+    <!-- ADMIN Section -->
+    <div sec:authorize="hasRole('ADMIN')" class="card">
+        <div class="card-header">
+            <h2 class="card-title">🛡️ Bảng Giám Sát Quản Trị (Administrator Workspace)</h2>
+            <span class="badge badge-closed">Toàn quyền hệ thống</span>
+        </div>
+        <p style="color: #64748b; margin-bottom: 1.25rem;">
+            Theo dõi thống kê toàn bộ bài tập, bài nộp, tỷ lệ chấm điểm và quản lý phân quyền các tài khoản người dùng.
+        </p>
+        <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+            <a th:href="@{/admin}" class="btn btn-primary">📊 Xem bảng thống kê hệ thống</a>
+            <a th:href="@{/admin/users}" class="btn btn-secondary">👥 Quản lý tài khoản & Gán vai trò</a>
+            <a th:href="@{/admin/tasks}" class="btn btn-outline">📋 Giám sát toàn bộ Tasks cá nhân</a>
+        </div>
+    </div>
+
+    <!-- General Tasks Link -->
+    <div class="card" style="background: #f8fafc;">
+        <h3 style="font-size: 1.1rem; color: #334155; margin-bottom: 0.5rem;">📌 Quản lý công việc cá nhân (Tutorial Part 2)</h3>
+        <p style="color: #64748b; margin-bottom: 1rem;">Mỗi người dùng có một danh sách công việc cá nhân riêng biệt được bảo vệ bởi ownership ở tầng JPA & Service.</p>
+        <a th:href="@{/tasks}" class="btn btn-outline btn-sm">Mở danh sách công việc cá nhân</a>
+    </div>
+</div>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+
+</body>
+</html>

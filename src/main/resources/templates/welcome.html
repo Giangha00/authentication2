@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments/layout :: head('Trang chủ - Cổng Giao Bài Tập')}"></head>
+<body>
+
+<nav th:replace="~{fragments/layout :: nav}"></nav>
+
+<div class="container">
+    <div class="card" style="text-align: center; padding: 3rem 1.5rem; background: linear-gradient(135deg, #1e293b, #0f172a); color: white;">
+        <h1 style="font-size: 2.2rem; margin-bottom: 1rem; color: #38bdf8;">CỔNG GIAO & CHẤM BÀI TẬP HỌC VIÊN</h1>
+        <p style="font-size: 1.15rem; color: #cbd5e1; max-width: 750px; margin: 0 auto 2rem auto;">
+            Hệ thống phân quyền theo vai trò (Role-Based Access Control) và quyền sở hữu dữ liệu (Data Ownership) xây dựng trên nền tảng Spring Boot 4.1, Spring Security 7, Spring Data JPA, Flyway và Thymeleaf.
+        </p>
+
+        <div sec:authorize="isAnonymous()" style="display: flex; justify-content: center; gap: 1rem;">
+            <a th:href="@{/login}" class="btn btn-primary" style="padding: 0.75rem 2rem; font-size: 1.05rem;">🔑 Đăng nhập hệ thống</a>
+            <a th:href="@{/registration}" class="btn btn-outline" style="padding: 0.75rem 2rem; font-size: 1.05rem; color: white; border-color: #64748b;">📝 Đăng ký học viên</a>
+        </div>
+
+        <div sec:authorize="isAuthenticated()" style="margin-top: 1rem;">
+            <a th:href="@{/home}" class="btn btn-primary" style="padding: 0.75rem 2.5rem; font-size: 1.1rem;">🚀 Vào Bảng Điều Khiển Làm Việc</a>
+        </div>
+    </div>
+
+    <!-- Features & Roles Matrix -->
+    <div class="grid-cards">
+        <div class="card">
+            <h2 style="font-size: 1.25rem; color: #2563eb; margin-bottom: 0.75rem;">🎓 Dành cho Học viên (STUDENT)</h2>
+            <ul style="padding-left: 1.25rem; color: #475569; font-size: 0.95rem; line-height: 1.8;">
+                <li>Xem danh sách các bài tập được giảng viên giao (chỉ bài OPEN).</li>
+                <li>Nộp bài làm (text hoặc link GitHub repository) trước hạn nộp.</li>
+                <li>Hỗ trợ nộp lại và cập nhật bài nộp khi bài còn mở.</li>
+                <li>Xem điểm số và nhận xét đánh giá chi tiết của giảng viên.</li>
+            </ul>
+        </div>
+
+        <div class="card">
+            <h2 style="font-size: 1.25rem; color: #16a34a; margin-bottom: 0.75rem;">👨‍🏫 Dành cho Giảng viên (LECTURER)</h2>
+            <ul style="padding-left: 1.25rem; color: #475569; font-size: 0.95rem; line-height: 1.8;">
+                <li>Tạo bản thảo bài tập mới (DRAFT) với thời hạn ở tương lai.</li>
+                <li>Chỉnh sửa nội dung, phân công danh sách học sinh và Mở bài (OPEN).</li>
+                <li>Đóng bài tập (CLOSED) khi hết hạn để chốt bài nộp.</li>
+                <li>Chấm điểm (thang 0.00 - 10.00) và viết nhận xét cho học viên.</li>
+            </ul>
+        </div>
+
+        <div class="card">
+            <h2 style="font-size: 1.25rem; color: #d97706; margin-bottom: 0.75rem;">🛡️ Dành cho Quản trị viên (ADMIN)</h2>
+            <ul style="padding-left: 1.25rem; color: #475569; font-size: 0.95rem; line-height: 1.8;">
+                <li>Bảng thống kê toàn diện: số bài tập, số bài nộp, số đã chấm.</li>
+                <li>Quản lý danh sách tài khoản trong toàn trường.</li>
+                <li>Cấp phát vai trò có kiểm soát (ROLE_LECTURER, ROLE_ADMIN).</li>
+                <li>Giám sát tuân thủ: Admin không can thiệp sửa điểm của giảng viên.</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Quick Test Accounts Table -->
+    <div class="card">
+        <div class="card-header">
+            <h2 class="card-title">🔑 Danh sách tài khoản thử nghiệm mẫu (Seed Accounts)</h2>
+            <span class="badge badge-open">Mật khẩu chung: Password@123</span>
+        </div>
+        <div class="table-responsive">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Tài khoản (Username)</th>
+                        <th>Họ và tên</th>
+                        <th>Vai trò (Role)</th>
+                        <th>Phạm vi quyền</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>admin</strong></td>
+                        <td>Quản Trị Viên Hệ Thống</td>
+                        <td><span class="badge badge-closed">ROLE_ADMIN</span></td>
+                        <td>Giám sát hệ thống, quản lý tài khoản & vai trò</td>
+                    </tr>
+                    <tr>
+                        <td><strong>lecturer1</strong></td>
+                        <td>Giảng Viên Nguyễn Văn A</td>
+                        <td><span class="badge badge-open">ROLE_LECTURER</span></td>
+                        <td>Tạo bài, giao bài, đóng bài và chấm điểm bài tập 1, 2</td>
+                    </tr>
+                    <tr>
+                        <td><strong>lecturer2</strong></td>
+                        <td>Giảng Viên Trần Thị B</td>
+                        <td><span class="badge badge-open">ROLE_LECTURER</span></td>
+                        <td>Quản lý bài tập 3, chấm điểm cho học viên</td>
+                    </tr>
+                    <tr>
+                        <td><strong>student1</strong></td>
+                        <td>Học Viên Lê Hoàng</td>
+                        <td><span class="badge badge-draft">ROLE_STUDENT</span></td>
+                        <td>Được giao bài tập 2, nộp bài & xem điểm</td>
+                    </tr>
+                    <tr>
+                        <td><strong>student2</strong></td>
+                        <td>Học Viên Phạm Thảo</td>
+                        <td><span class="badge badge-draft">ROLE_STUDENT</span></td>
+                        <td>Được giao bài tập 2 và 3, đã có bài nộp bài tập 3 được chấm 9.50</td>
+                    </tr>
+                    <tr>
+                        <td><strong>student3</strong></td>
+                        <td>Học Viên Vũ Minh</td>
+                        <td><span class="badge badge-draft">ROLE_STUDENT</span></td>
+                        <td>Được giao bài tập 3</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Links from PDF Section 13 -->
+    <div class="card" style="background: #f1f5f9;">
+        <h3 style="font-size: 1.1rem; margin-bottom: 0.5rem;">Liên kết nhanh phần Tutorial:</h3>
+        <p><a th:href="@{/tasks}">Công việc của tôi (/tasks)</a></p>
+        <p sec:authorize="hasRole('ADMIN')">
+            <a th:href="@{/admin/tasks}">Giám sát toàn bộ công việc (/admin/tasks)</a>
+        </p>
+    </div>
+</div>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+
+</body>
+</html>

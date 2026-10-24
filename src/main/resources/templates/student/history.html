@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Lịch sử nộp bài & Điểm số - Học viên')}"></head>
+<body>
+
+<nav th:replace="~{fragments/layout :: nav}"></nav>
+
+<div class="container">
+    <div style="margin-bottom: 1.5rem;">
+        <h1 style="font-size: 1.8rem; color: #1e293b;">Lịch Sử Nộp Bài & Kết Quả Học Tập</h1>
+        <p style="color: #64748b;">Theo dõi tất cả bài tập bạn đã nộp, trạng thái chấm điểm và nhận xét từ giảng viên</p>
+    </div>
+
+    <div class="card">
+        <p th:if="${submissions.empty}" style="color: #64748b; text-align: center; padding: 2rem 0;">
+            Bạn chưa nộp bài tập nào. Hãy vào mục <a th:href="@{/student/assignments}">Bài tập được giao</a> để bắt đầu nộp bài.
+        </p>
+
+        <div th:unless="${submissions.empty}" class="table-responsive">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Tiêu đề bài tập</th>
+                        <th>Thời gian nộp</th>
+                        <th>Nội dung đã nộp</th>
+                        <th>Điểm số</th>
+                        <th>Nhận xét của giảng viên</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="s : ${submissions.content}">
+                        <td>
+                            <strong th:text="${s.assignmentTitle}">Tiêu đề bài tập</strong>
+                        </td>
+                        <td th:text="${s.submittedAtFormatted}">24/10/2026 15:30:00</td>
+                        <td>
+                            <div style="max-width: 320px; word-break: break-all;" th:text="${s.content}"></div>
+                        </td>
+                        <td>
+                            <span th:if="${s.isGraded}" class="badge badge-graded" style="font-size: 0.95rem; font-weight: 800;" th:text="${s.score + ' / 10.0'}">9.50 / 10.0</span>
+                            <span th:unless="${s.isGraded}" class="badge badge-pending">Chờ chấm điểm</span>
+                        </td>
+                        <td>
+                            <span th:if="${s.feedback != null and !s.feedback.isEmpty()}" th:text="${s.feedback}"></span>
+                            <span th:unless="${s.feedback != null and !s.feedback.isEmpty()}" style="color: #94a3b8; font-style: italic;">Chưa có nhận xét</span>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Pagination -->
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid var(--border);">
+            <div>
+                <span style="color: #64748b; font-size: 0.9rem;" th:text="${'Trang ' + (submissions.number + 1) + ' / ' + (submissions.totalPages == 0 ? 1 : submissions.totalPages)}">Trang 1 / 1</span>
+            </div>
+            <div style="display: flex; gap: 0.5rem;">
+                <a th:if="${submissions.hasPrevious()}" th:href="@{/student/history(page=${submissions.number - 1})}" class="btn btn-outline btn-sm">Trang trước</a>
+                <a th:if="${submissions.hasNext()}" th:href="@{/student/history(page=${submissions.number + 1})}" class="btn btn-outline btn-sm">Trang sau</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+
+</body>
+</html>
